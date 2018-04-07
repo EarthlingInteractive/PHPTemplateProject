@@ -48,4 +48,22 @@ dl.tabby dd {
 <?php endforeach; ?>
 </ul>
 
+<form>
+<fieldset>
+<legend>no-op multi select box with some preselected options:</legend>
+
+<p>This is to demonstrate that PageUtil#emitSelectOptions works.</p>
+
+<select multiple>
+<?php $PU->emitSelectOptions(array(
+  'foo' => 'Foo',
+  'bar' => 'Bar',
+  'baz' => 'Baz',
+  'quux' => 'Quux',
+), array('bar','baz'));
+?>
+</select>
+</fieldset>
+</form>
+
 <?php $PU->emitHtmlFooter(); ?>

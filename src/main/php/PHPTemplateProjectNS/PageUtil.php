@@ -68,10 +68,11 @@ class PHPTemplateProjectNS_PageUtil extends PHPTemplateProjectNS_Component
 		include $this->templateFile($viewName);;
 	}
 	
-	public function emitSelectOptions( array $options, $selectedValue ) {
+	public function emitSelectOptions( array $options, $selectedValues ) {
+		$selectedValues = PHPTemplateProjectNS_Util::toSet($selectedValues);
 		foreach( $options as $k => $v ) {
 			echo "<option value=\"", htmlspecialchars($k), "\"",
-				($selectedValue == $k ? ' selected' : ''), ">",
+				(isset($selectedValues[$k]) ? ' selected' : ''), ">",
 				htmlspecialchars($v), "</option>\n";
 		}
 	}

@@ -14,6 +14,17 @@ class PHPTemplateProjectNS_Util
 		return "a ".gettype($thing);
 	}
 	
+	public static function toSet($thing) {
+		if( $thing === null ) return array();
+		if( is_scalar($thing) ) return array($thing=>$thing);
+		if( is_array($thing) ) {
+			$set = array();
+			foreach($thing as $v) $set[$v] = $v;
+			return $set;
+		}
+		throw new Exception("Don't know how to settify ".self::describe($thing));
+	}
+	
 	/**
 	 * This is named to match PHP's built-in jsonSerialize method
 	 * and doesn't actually 'serialize', but turns a value
