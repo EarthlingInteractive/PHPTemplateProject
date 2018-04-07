@@ -3,6 +3,9 @@
 class PHPTemplateProjectNS_PageAction_ShowHello extends PHPTemplateProjectNS_PageAction_TemplatePageAction
 {
 	public function getTemplateName() { return 'hello'; }
+	public function needsImplicitTransaction( PHPTemplateProjectNS_ActionContext $actx ) {
+		return false;
+	}
 	public function getTemplateParameters() {
 		$helloUri = "hello/".rawurlencode("PHP Template Project");
 
