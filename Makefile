@@ -55,6 +55,7 @@ default: redeploy
 	redeploy-without-upgrading-the-database \
 	resources \
 	runtime-resources \
+	run-containerized-php-tests \
 	run-tests \
 	run-unit-tests \
 	run-integration-tests \
@@ -164,6 +165,9 @@ run-web-server: runtime-resources upgrade-database-with-test-data
 redeploy-without-upgrading-the-database: runtime-resources
 
 redeploy: redeploy-without-upgrading-the-database upgrade-database fix-entity-id-sequence
+
+run-containerized-php-tests:
+	util/run-containerized-php-tests
 
 everything: \
 	config/dbc.json \
