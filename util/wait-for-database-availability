@@ -1,0 +1,70 @@
+#!/usr/bin/env php
+<?php
+
+require_once __DIR__.'/../init-environment.php';
+
+$dbAdapter = $PHPTemplateProjectNS_Registry->dbAdapter;
+
+$selfName = basename($argv[0]);
+$outputMode = 'quiet';
+$interval = 5;
+$timeout = 100;
+for( $i=1; $i<count($argv); ++$i ) {
+	$arg = $argv[$i];
+	if( preg_match('/^--timeout=(\d+)$/', $arg, $bif) ) {
+		$timeout = $bif[1];
+	} else if( $arg == '-q' ) {
+		$outputMode = 'quiet';
+	} else if( $arg == '-v' ) {
+		$outputMode = 'normal';
+	} else if( $arg == '--pretty' ) {
+		$outputMode = 'pretty';
+	} else {
+		fwrite(STDERR, "$selfName: Invalid argument: '$arg'\n");
+		fwrite(STDERR, "Usage: $selfName [-q|-v|--pretty] [--timeout=<seconds>]\n");
+		exit(1);
+	}
+}
+
+$attempts = 0;
+
+switch( $outputMode ) {
+case 'pretty':
+	$connectedMessage = "\e[32;2mconnected\e[0m\n";
+	$nextAttemptMessage = ".";
+	$failedMessage = "\e[31;2mfailed\e[0m\n";
+	break;
+case 'normal':
+	$connectedMessage = "connected\n";
+	$nextAttemptMessage = ".";
+	$failedMessage = "failed\n";
+	break;
+default:
+	$connectedMessage = "";
+	$nextAttemptMessage = "";
+	$failedMessage = "";
+}
+
+if( $outputMode != 'quiet' ) {
+	echo "Waiting for database server...";
+}
+
+while( $attempts < $timeout ) {
+	try {
+		$dbAdapter->connect();
+		echo $connectedMessage;
+		exit;
+	} catch( Doctrine\DBAL\Exception\ConnectionException $e ) {
+		echo $nextAttemptMessage;
+		$attempts += $interval;
+		sleep($interval);
+	} catch( Exception $e ) {
+		echo $failedMessage;
+		fwrite(STDERR, "Exception!\n");
+		fwrite(STDERR, get_class($e).": ".$e->getMessage()."\n");
+		exit(1);
+	}
+}
+echo $failedMessage;
+fwrite(STDERR, "Too many failures.  Maybe database server's broke.\n");
+exit(1);
